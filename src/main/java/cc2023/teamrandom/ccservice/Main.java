@@ -9,9 +9,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import philippcerweny.restapi.orderservice.interfaces.ICustomerRepository;
-import philippcerweny.restapi.orderservice.interfaces.IOrderRepository;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 @SpringBootApplication
@@ -24,12 +26,13 @@ public class Main {
     }
 
     @Bean
-    CommandLineRunner initDatabase(ICustomerRepository customerRepository, IOrderRepository orderRepository)
-    {
-        return args ->
-        {
+    public RestTemplate restTemplate(List<HttpMessageConverter<?>> messageConverters) {
+        return new RestTemplate(messageConverters);
+    }
 
-        };
+    @Bean
+    public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+        return new ByteArrayHttpMessageConverter();
     }
 
     @Bean
@@ -46,7 +49,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(philippcerweny.restapi.orderservice.Main.class, args);
+        SpringApplication.run(Main.class, args);
     }
 }
 

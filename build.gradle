@@ -49,7 +49,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'philippcerweny.restapi.orderservice.Main'
+        attributes 'Main-Class': 'cc2023.teamrandom.ccservice.Main'
     }
 }
 

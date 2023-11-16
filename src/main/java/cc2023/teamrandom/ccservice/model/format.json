@@ -1,0 +1,76 @@
+{
+  "id": "111414942541259235",
+  "uri": "https://mastodon.social/users/Digestey/statuses/111414942541259235",
+  "createdAt": {
+    "instant": "2023-11-15T14:05:06.650Z",
+    "valid": true
+  },
+  "account": {
+    "id": "111414360786707681",
+    "username": "Digestey",
+    "acct": "Digestey",
+    "url": "https://mastodon.social/@Digestey",
+    "displayName": "",
+    "note": "",
+    "avatar": "https://files.mastodon.social/accounts/avatars/111/414/360/786/707/681/original/278ad18b54f0cc17.jpg",
+    "avatarStatic": "https://files.mastodon.social/accounts/avatars/111/414/360/786/707/681/original/278ad18b54f0cc17.jpg",
+    "header": "https://mastodon.social/headers/original/missing.png",
+    "headerStatic": "https://mastodon.social/headers/original/missing.png",
+    "fields": [],
+    "emojis": [],
+    "moved": null,
+    "createdAt": {
+      "instant": "2023-11-15T00:00:00Z",
+      "valid": true
+    },
+    "lastStatusAt": {
+      "instant": "2023-11-15T00:00:00Z",
+      "valid": true
+    },
+    "statusesCount": 2,
+    "followersCount": 0,
+    "followingCount": 0,
+    "limited": null,
+    "locked": false,
+    "group": false,
+    "suspended": null,
+    "bot": false,
+    "discoverable": null,
+    "notIndexed": false
+  },
+  "content": "<p>Testing with a second toot</p>",
+  "visibility": "PUBLIC",
+  "spoilerText": "",
+  "mediaAttachments": [],
+  "application": {
+    "name": "Web",
+    "website": null,
+    "vapidKey": "",
+    "clientId": null,
+    "clientSecret": null
+  },
+  "mentions": [],
+  "tags": [],
+  "emojis": [],
+  "reblogsCount": 0,
+  "favouritesCount": 0,
+  "repliesCount": 0,
+  "url": "https://mastodon.social/@Digestey/111414942541259235",
+  "inReplyToId": null,
+  "inReplyToAccountId": null,
+  "reblog": null,
+  "poll": null,
+  "card": null,
+  "language": "en",
+  "text": null,
+  "editedAt": {
+    "valid": false
+  },
+  "filtered": [],
+  "pinned": false,
+  "muted": false,
+  "reblogged": false,
+  "sensitive": false,
+  "bookmarked": false,
+  "favourited": false
+}
