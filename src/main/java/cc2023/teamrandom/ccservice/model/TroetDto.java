@@ -1,2 +1,4 @@
-package cc2023.teamrandom.ccservice.model;public class TroetDto {
+package cc2023.teamrandom.ccservice.model;
+
+public class TroetDto {
 }

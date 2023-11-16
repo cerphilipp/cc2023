@@ -1,4 +1,7 @@
 package cc2023.teamrandom.ccservice.interfaces;
 
-public class TroetListService {
+import org.springframework.stereotype.Service;
+
+@Service
+public interface TroetListService {
 }

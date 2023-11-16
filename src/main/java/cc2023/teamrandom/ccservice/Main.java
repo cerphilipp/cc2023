@@ -1,16 +1,13 @@
-package cc2023.teamrandom;
+package cc2023.teamrandom.ccservice;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import philippcerweny.restapi.orderservice.interfaces.ICustomerRepository;
-import philippcerweny.restapi.orderservice.interfaces.IOrderRepository;
 
 import java.util.logging.Logger;
 
@@ -20,16 +17,7 @@ public class Main {
     @Bean
     Logger getLogger()
     {
-        return Logger.getLogger("Service");
-    }
-
-    @Bean
-    CommandLineRunner initDatabase(ICustomerRepository customerRepository, IOrderRepository orderRepository)
-    {
-        return args ->
-        {
-
-        };
+        return Logger.getLogger("cc-service");
     }
 
     @Bean
@@ -37,7 +25,7 @@ public class Main {
     {
         return new OpenAPI().components(new Components())
                 .info(new Info()
-                        .title("OrderApi")
+                        .title("cc2023-service")
                         .version(appVersion)
                         .license(new License()
                                 .name("MIT")
@@ -46,7 +34,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(philippcerweny.restapi.orderservice.Main.class, args);
+        SpringApplication.run(cc2023.teamrandom.ccservice.Main.class, args);
     }
 }
 
