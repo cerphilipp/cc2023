@@ -11,12 +11,14 @@ sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
-
+    maven {
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    implementation "social.bigbone:bigbone:2.0.0-SNAPSHOT"
     implementation 'com.github.javafaker:javafaker:1.0.2'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
