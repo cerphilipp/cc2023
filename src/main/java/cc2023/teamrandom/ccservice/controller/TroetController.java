@@ -35,22 +35,21 @@ public class TroetController {
         this.logger = logger;
     }
 
-    @GetMapping("api/home/troets/direct")
-    public ResponseEntity<String> list(@RequestParam(name="some_account_name") String accountName) {c
+    @GetMapping("api/home/troets")
+    public ResponseEntity<String> list() {
         return new ResponseEntity<>("Hello World", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/gethome", method = GET)
-    public Status[] getHome () {
+    public ResponseEntity<String> getHome () {
         String response = service.getHome();
-        JsonReader jsonReader = new JsonReader(new StringReader(response));
-        jsonReader.setLenient(true);
-        Status[] status = gson.fromJson(jsonReader, Status[].class);
-        System.out.println(status.length);
-        System.out.println(status[0]);
-        return status;
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
-    @RequestMapping(value = "/api/home/troets/direct")
+    @RequestMapping(value = "/api/home/troets/reblogged")
+    public ResponseEntity<String> reblogged(@RequestParam(name="troeter") String troeter){
+        String entireStatus = getHome().getBody();
+        return new ResponseEntity<>("just4test", HttpStatus.OK);
+    }
 }
