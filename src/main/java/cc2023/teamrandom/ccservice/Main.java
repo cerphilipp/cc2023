@@ -1,4 +1,4 @@
-package cc2023.teamrandom;
+package cc2023.teamrandom.ccservice;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

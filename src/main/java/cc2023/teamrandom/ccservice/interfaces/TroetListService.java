@@ -4,6 +4,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.Objects;
 
 
 public class TroetListService {
@@ -16,8 +17,7 @@ public class TroetListService {
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             HttpEntity<String> entity = new HttpEntity<>("", headers);
             ResponseEntity<?> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-            System.out.println(result.getBody());
-            return result.getBody().toString();
+            return Objects.requireNonNull(result.getBody()).toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
