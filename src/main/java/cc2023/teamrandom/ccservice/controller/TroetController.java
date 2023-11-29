@@ -50,6 +50,6 @@ public class TroetController {
     @RequestMapping(value = "/api/home/troets/reblogged")
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter") String troeter){
         String entireStatus = getHome().getBody();
-        return new ResponseEntity<>("just4test", HttpStatus.OK);
+        return new ResponseEntity<>("just4test: "+troeter, HttpStatus.OK);
     }
 }
