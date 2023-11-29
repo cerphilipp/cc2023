@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -56,8 +59,22 @@ public class TroetController {
     }
 
     @RequestMapping(value = "/api/home/troets/reblogged")
-    public ResponseEntity<String> reblogged(@RequestParam(name="troeter") String troeter){
+    public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
         Status[] entireStatus = getHome().getBody();
-        return new ResponseEntity<>(entireStatus.toString(), HttpStatus.OK);
+        if(entireStatus == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        ArrayList<Status> resultAsArrayList = new ArrayList<>();
+        if(troeter==null) {
+            for (Status status : entireStatus) {
+                if (status.isReblogged()) resultAsArrayList.add(status);
+            }
+        } else {
+            for (Status status : entireStatus) {
+                if (status.isReblogged() && status.getUsername().equals(troeter)) resultAsArrayList.add(status);
+            }
+        }
+        Status[] result = new Status[resultAsArrayList.size()];
+        result = resultAsArrayList.toArray(result);
+        return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
     }
 }

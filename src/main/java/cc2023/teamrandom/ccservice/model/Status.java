@@ -65,6 +65,10 @@ public class Status {
                 return account;
         }
 
+        public String getUsername() {
+                return account.getUsername();
+        }
+
         public void setAccount(MastodonAccount account) {
                 this.account = account;
         }
