@@ -26,5 +26,5 @@ package cc2023.teamrandom.ccservice.model;
  * THE SOFTWARE.
  */
 
-public record PreviewCard() {
+public class PreviewCard {
 }
