@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.1.4'
     id 'java'
 
 }
@@ -16,6 +17,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     implementation 'com.github.javafaker:javafaker:1.0.2'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
@@ -43,3 +45,14 @@ jar {
         attributes 'Main-Class': 'cc2023.teamrandom.ccservice.Main'
     }
 }
+
+jib {
+    to {
+        image = 'cc-service:1'
+    }
+}
+
+task loadDockerImageIntoKind(type: Exec, dependsOn: 'jibDockerBuild') {
+    commandLine 'kind', 'load', 'docker-image', 'cc-service:1', '--name', 'cc-2023'
+}
+

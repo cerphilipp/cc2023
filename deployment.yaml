@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cc-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cc-service
+  template:
+    metadata:
+      labels:
+        app: cc-service
+    spec:
+      containers:
+      - name: cc-service-container
+        image: cc-service:1
+        ports:
+        - containerPort: 9000
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 9000
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 3
