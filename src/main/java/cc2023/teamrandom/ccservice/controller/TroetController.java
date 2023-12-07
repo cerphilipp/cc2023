@@ -62,7 +62,7 @@ public class TroetController {
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
 
         Status[] entireStatus = getHome().getBody();
-        if(entireStatus == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
+        if(entireStatus == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
 
         ArrayList<Status> resultAsArrayList = new ArrayList<>();
         if(troeter==null) {
