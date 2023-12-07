@@ -44,24 +44,20 @@ public class TroetController {
 
     }
 
-    @GetMapping("/api/home/troets{parameter}")
-    public ResponseEntity<String> troets(@PathVariable(name = "parameter") String parameter) {
+    @RequestMapping("/api/home/troets")
+    public ResponseEntity<String> troets(@RequestParam(name = "limit", required = false) Integer limit,
+                                         @RequestParam(name = "offset", required = false) Integer offset,
+                                         @RequestParam(name = "troeter", required = false) String troeter) {
         Status[] entireStatus = getHome().getBody();
         if(entireStatus == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
 
         try{
-        if(parameter != null && parameter.charAt(0) == '?'){
-            //Request mit Parametern
-        } else if(parameter != null && parameter.charAt(0) != '?'){
-                return new ResponseEntity<>("505", HttpStatus.BAD_REQUEST);
-        } else{
-            //Request ohne Parameter
-        }
+//        request an Server
 
         return new ResponseEntity<>("Hello World", HttpStatus.OK);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>("505", HttpStatus.BAD_REQUEST);
         }
     }
 }
