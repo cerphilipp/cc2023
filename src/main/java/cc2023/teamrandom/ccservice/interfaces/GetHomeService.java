@@ -1,10 +1,12 @@
 package cc2023.teamrandom.ccservice.interfaces;
 
+
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Objects;
+
 
 
 public class GetHomeService implements TroetListService{
@@ -24,3 +26,4 @@ public class GetHomeService implements TroetListService{
         return null;
     }
 }
+
