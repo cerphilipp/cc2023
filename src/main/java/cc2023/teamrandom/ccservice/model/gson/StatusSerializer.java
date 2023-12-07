@@ -1,5 +1,6 @@
-package cc2023.teamrandom.ccservice.model;
+package cc2023.teamrandom.ccservice.model.gson;
 
+import cc2023.teamrandom.ccservice.model.Status;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

@@ -4,27 +4,25 @@ import cc2023.teamrandom.ccservice.interfaces.GetHomeService;
 import cc2023.teamrandom.ccservice.interfaces.TroetListService;
 
 import cc2023.teamrandom.ccservice.model.*;
+import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
+import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.util.Arrays;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
 @RestController
@@ -80,17 +78,14 @@ public class TroetController {
 
         Status[] entireStatus = getHome().getBody();
         if(entireStatus == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
-
         ArrayList<Status> resultAsArrayList = new ArrayList<>();
-        if(troeter==null) {
+
             for (Status status : entireStatus) {
                 if (status.isReblogged()) resultAsArrayList.add(status);
+                System.out.println(status.toString());
+                System.out.println(status.isReblogged());
             }
-        } else {
-            for (Status status : entireStatus) {
-                if (status.isReblogged() && status.getUsername().equals(troeter)) resultAsArrayList.add(status);
-            }
-        }
+        System.out.println(resultAsArrayList.toString());
         Status[] result = new Status[resultAsArrayList.size()];
         result = resultAsArrayList.toArray(result);
         return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
