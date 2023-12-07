@@ -35,6 +35,7 @@ public class Main {
     public static void main(String[] args) {
 
         SpringApplication.run(cc2023.teamrandom.ccservice.Main.class, args);
+
     }
 }
 
