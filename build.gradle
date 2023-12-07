@@ -6,17 +6,18 @@ plugins {
 }
 
 version = '1.0'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 
 repositories {
     mavenCentral()
-
+    maven {
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     implementation 'com.github.javafaker:javafaker:1.0.2'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
@@ -28,7 +29,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation  'org.mockito:mockito-core:1.+'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
 
 }
