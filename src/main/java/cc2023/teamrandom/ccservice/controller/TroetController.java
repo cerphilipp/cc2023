@@ -48,8 +48,14 @@ public class TroetController {
     }
 
     @RequestMapping(value = "/api/home/troets/reblogged")
-    public ResponseEntity<String> reblogged(@RequestParam(name="troeter") String troeter){
+    public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
         String entireStatus = getHome().getBody();
+        String response;
+        if(troeter == null) {
+            response = entireStatus;
+        } else {
+           // parse response for rebloggs from given user user.
+        }
         return new ResponseEntity<>("just4test", HttpStatus.OK);
     }
 }
