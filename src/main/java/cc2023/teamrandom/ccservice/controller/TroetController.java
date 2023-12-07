@@ -13,14 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.StringReader;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
