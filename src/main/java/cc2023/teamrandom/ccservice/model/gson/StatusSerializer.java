@@ -1,43 +1,43 @@
 package cc2023.teamrandom.ccservice.model.gson;
 
-import cc2023.teamrandom.ccservice.model.Status;
+import cc2023.teamrandom.ccservice.model.MastodonStatus;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-public class StatusSerializer implements JsonSerializer<Status> {
+public class StatusSerializer implements JsonSerializer<MastodonStatus> {
     @Override
-    public JsonElement serialize(Status status, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(MastodonStatus mastodonStatus, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", status.getId());
-        jsonObject.addProperty("uri", status.getUri());
-        jsonObject.add("createdAt", jsonSerializationContext.serialize(status.getCreatedAt()));
-        jsonObject.add("account", jsonSerializationContext.serialize(status.getAccount()));
-        jsonObject.addProperty("content", status.getContent());
-        jsonObject.addProperty("visibility", status.getVisibility());
-        jsonObject.addProperty("spoilerText", status.getSpoilerText());
-        jsonObject.add("mediaAttachments", jsonSerializationContext.serialize(status.getMediaAttachments()));
-        jsonObject.add("application", jsonSerializationContext.serialize(status.getApplication()));
-        jsonObject.add("mentions", jsonSerializationContext.serialize(status.getMentions()));
-        jsonObject.add("tags", jsonSerializationContext.serialize(status.getTags()));
-        jsonObject.addProperty("reblogsCount", status.getReblogsCount());
-        jsonObject.addProperty("favouritesCount", status.getFavouritesCount());
-        jsonObject.addProperty("repliesCount", status.getRepliesCount());
-        jsonObject.addProperty("url", status.getUrl());
-        jsonObject.addProperty("inReplyToId", status.getInReplyToId());
-        jsonObject.addProperty("inReplyToAccountId", status.getInReplyToAccountId());
-        jsonObject.add("reblog", jsonSerializationContext.serialize(status.getReblog()));
-        jsonObject.add("poll", jsonSerializationContext.serialize(status.getPoll()));
-        jsonObject.add("card", jsonSerializationContext.serialize(status.getCard()));
-        jsonObject.addProperty("language", status.getLanguage());
-        jsonObject.add("text", jsonSerializationContext.serialize(status.getText()));
-        jsonObject.add("editedAt", jsonSerializationContext.serialize(status.getEditedAt()));
-        jsonObject.addProperty("pinned", status.isPinned());
-        jsonObject.addProperty("muted", status.isMuted());
-        jsonObject.addProperty("reblogged", status.isReblogged());
-        jsonObject.addProperty("sensitive", status.isSensitive());
-        jsonObject.addProperty("bookmarked", status.isBookmarked());
-        jsonObject.addProperty("favourited", status.isFavourited());
+        jsonObject.addProperty("id", mastodonStatus.getId());
+        jsonObject.addProperty("uri", mastodonStatus.getUri());
+        jsonObject.add("createdAt", jsonSerializationContext.serialize(mastodonStatus.getCreatedAt()));
+        jsonObject.add("account", jsonSerializationContext.serialize(mastodonStatus.getAccount()));
+        jsonObject.addProperty("content", mastodonStatus.getContent());
+        jsonObject.addProperty("visibility", mastodonStatus.getVisibility());
+        jsonObject.addProperty("spoilerText", mastodonStatus.getSpoilerText());
+        jsonObject.add("mediaAttachments", jsonSerializationContext.serialize(mastodonStatus.getMediaAttachments()));
+        jsonObject.add("application", jsonSerializationContext.serialize(mastodonStatus.getApplication()));
+        jsonObject.add("mentions", jsonSerializationContext.serialize(mastodonStatus.getMentions()));
+        jsonObject.add("tags", jsonSerializationContext.serialize(mastodonStatus.getTags()));
+        jsonObject.addProperty("reblogsCount", mastodonStatus.getReblogsCount());
+        jsonObject.addProperty("favouritesCount", mastodonStatus.getFavouritesCount());
+        jsonObject.addProperty("repliesCount", mastodonStatus.getRepliesCount());
+        jsonObject.addProperty("url", mastodonStatus.getUrl());
+        jsonObject.addProperty("inReplyToId", mastodonStatus.getInReplyToId());
+        jsonObject.addProperty("inReplyToAccountId", mastodonStatus.getInReplyToAccountId());
+        jsonObject.add("reblog", jsonSerializationContext.serialize(mastodonStatus.getReblog()));
+        jsonObject.add("poll", jsonSerializationContext.serialize(mastodonStatus.getPoll()));
+        jsonObject.add("card", jsonSerializationContext.serialize(mastodonStatus.getCard()));
+        jsonObject.addProperty("language", mastodonStatus.getLanguage());
+        jsonObject.add("text", jsonSerializationContext.serialize(mastodonStatus.getText()));
+        jsonObject.add("editedAt", jsonSerializationContext.serialize(mastodonStatus.getEditedAt()));
+        jsonObject.addProperty("pinned", mastodonStatus.isPinned());
+        jsonObject.addProperty("muted", mastodonStatus.isMuted());
+        jsonObject.addProperty("reblogged", mastodonStatus.isReblogged());
+        jsonObject.addProperty("sensitive", mastodonStatus.isSensitive());
+        jsonObject.addProperty("bookmarked", mastodonStatus.isBookmarked());
+        jsonObject.addProperty("favourited", mastodonStatus.isFavourited());
         return jsonObject;
     }
 }

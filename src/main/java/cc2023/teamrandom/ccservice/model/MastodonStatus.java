@@ -1,12 +1,8 @@
 package cc2023.teamrandom.ccservice.model;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
-import cc2023.teamrandom.ccservice.model.MastodonCreatedAt;
-import java.util.List;
-
-public class Status {
+public class MastodonStatus {
         private String id;
         private String uri;
         public MastodonCreatedAt createdAt;
