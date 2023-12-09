@@ -65,20 +65,55 @@ public class TroetController {
     }
 
     @RequestMapping("/api/home/troets")
-    public ResponseEntity<String> troets(@RequestParam(name = "limit", required = false) Integer limit,
-                                         @RequestParam(name = "offset", required = false) Integer offset,
-                                         @RequestParam(name = "troeter", required = false) String troeter) {
+    public ResponseEntity<Status[]> troets(@RequestParam(name = "limit", required = false) Integer limit,
+                                           @RequestParam(name = "offset", required = false) Integer offset,
+                                           @RequestParam(name = "troeter", required = false) String troeter) {
         Status[] entireStatus = getHome().getBody();
-        if(entireStatus == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
+        if(entireStatus == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         try{
+            int offsetcounter = 0;
+            int limitcounter = 0;
+            if(offset == null)offset = 0;
+            if(limit == null)limit = 0;
 //        request an Server
+            ArrayList<Status> resultAsArrayList = new ArrayList<>();
+            if(troeter==null) {
+                for (Status status : entireStatus) {
+                    if(offset != offsetcounter){
+                        offsetcounter += 1;
+                    }
+                    else if(limit != limitcounter){
+                        limitcounter += 1;
+                        resultAsArrayList.add(status);
+                    }
+                    else if(limit == 0)
+                    {
+                        resultAsArrayList.add(status);
+                    }
+                }
+            } else {
+                for (Status status : entireStatus) {
+                    if (status.getUsername().equals(troeter)) {
+                        if (offset != offsetcounter) {
+                            offsetcounter += 1;
+                        } else if (limit != limitcounter) {
+                            limitcounter += 1;
+                            resultAsArrayList.add(status);
+                        } else if (limit == 0) {
+                            resultAsArrayList.add(status);
+                        }
+                    }
+                }
+            }
+            Status[] result = new Status[resultAsArrayList.size()];
+            result = resultAsArrayList.toArray(result);
+            return new ResponseEntity<>(result, HttpStatus.OK);
 
 
-        return new ResponseEntity<>("Hello World", HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("505", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 /*
