@@ -17,13 +17,15 @@ public class TroetController {
 
     private TroetListService troetListService;
     private GetAllTroetersService getAllTroetersService;
+
     @Autowired
     private Logger logger;
 
-    public TroetController(TroetListService troetListService, Logger logger){
+    public TroetController(TroetListService troetListService, GetAllTroetersService getAllTroetersService,  Logger logger){
 
         this.troetListService = troetListService;
         this.logger = logger;
+        this.getAllTroetersService=getAllTroetersService;
     }
 
     @GetMapping("api/home/troets")
@@ -32,6 +34,7 @@ public class TroetController {
     }
 
     @GetMapping("api/home/troeters")
+
     public List<TroeterDTO> getAllTroeters() {
         return getAllTroetersService.getAllTroeters();
     }

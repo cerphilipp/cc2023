@@ -1,5 +1,7 @@
 package cc2023.teamrandom.ccservice;
 
+import cc2023.teamrandom.ccservice.interfaces.GetAllTroetersService;
+import cc2023.teamrandom.ccservice.services.GetAllTroetersServiceImpl;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -18,6 +20,11 @@ public class Main {
     Logger getLogger()
     {
         return Logger.getLogger("cc-service");
+    }
+
+    @Bean
+    public GetAllTroetersService getAllTroetersService(){
+        return new GetAllTroetersServiceImpl(); // todo: echte Implementierung mit Abhängigkeiten 
     }
 
     @Bean
