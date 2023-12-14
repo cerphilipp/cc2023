@@ -1,4 +1,4 @@
-package cc2023.teamrandom.ccservice.model;
+package cc2023.teamrandom.ccservice.model.gson;
 
 import com.google.gson.*;
 
