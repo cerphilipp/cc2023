@@ -40,7 +40,6 @@ public class TroetController {
                 .create();;
     }
 
-    @Autowired
     private Logger logger;
     private final Counter troetsrouteAccessCounter;
     private final Counter rebloggedAccesCounter;
