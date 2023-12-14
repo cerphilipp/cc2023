@@ -1,36 +1,70 @@
 package cc2023.teamrandom.ccservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
+
 public class MastodonStatus {
+        @JsonProperty("id")
         private String id;
+        @JsonProperty("uri")
         private String uri;
+        @JsonProperty("createdAt")
         public MastodonCreatedAt createdAt;
+        @JsonProperty("account")
         private MastodonAccount account;
+        @JsonProperty("content")
         private String content;
+        @JsonProperty("visibility")
         private String visibility;
+        @JsonProperty("spoilerText")
         private String spoilerText;
+        @JsonProperty("mediaAttachments")
         private List<Object> mediaAttachments;
+        @JsonProperty("application")
         private MastodonApplication application;
+        @JsonProperty("mentions")
         private List<Object> mentions;
+        @JsonProperty("tags")
         private List<Object> tags;
+        @JsonProperty("reblogsCount")
         private int reblogsCount;
+        @JsonProperty("favouritesCount")
         private int favouritesCount;
+        @JsonProperty("repliesCount")
         private int repliesCount;
+        @JsonProperty("url")
         private String url;
+        @JsonProperty("inReplyToId")
         private String inReplyToId;
+        @JsonProperty("inReplyToAccountId")
         private String inReplyToAccountId;
+        @JsonProperty("reblog")
         private Object reblog;
+        @JsonProperty("poll")
         private Object poll;
+        @JsonProperty("card")
         private Object card;
+        @JsonProperty("language")
         private String language;
+        @JsonProperty("text")
         private Object text;
+        @JsonProperty("editedAt")
         private MastodonCreatedAt editedAt;
+        @JsonProperty("pinned")
         private boolean pinned;
+        @JsonProperty("muted")
         private boolean muted;
+        @JsonProperty("reblogged")
         private boolean reblogged;
+        @JsonProperty("sensitive")
         private boolean sensitive;
+        @JsonProperty("bookmarked")
         private boolean bookmarked;
+        @JsonProperty("favourited")
         private boolean favourited;
 
         public String getId() {
@@ -281,28 +315,28 @@ public class MastodonStatus {
                         ", content='" + content + '\'' +
                         ", visibility='" + visibility + '\'' +
                         ", spoilerText='" + spoilerText + '\'' +
-                        ", mediaAttachments=" + mediaAttachments +
-                        ", application=" + application +
-                        ", mentions=" + mentions +
-                        ", tags=" + tags +
-                        ", reblogsCount=" + reblogsCount +
-                        ", favouritesCount=" + favouritesCount +
-                        ", repliesCount=" + repliesCount +
+                        ", mediaAttachments='" + mediaAttachments + '\'' +
+                        ", application='" + application + '\'' +
+                        ", mentions='" + mentions + '\'' +
+                        ", tags='" + tags + '\'' +
+                        ", reblogsCount='" + reblogsCount + '\'' +
+                        ", favouritesCount='" + favouritesCount + '\'' +
+                        ", repliesCount='" + repliesCount +
                         ", url='" + url + '\'' +
                         ", inReplyToId='" + inReplyToId + '\'' +
                         ", inReplyToAccountId='" + inReplyToAccountId + '\'' +
-                        ", reblog=" + reblog +
-                        ", poll=" + poll +
-                        ", card=" + card +
+                        ", reblog='" + reblog + '\'' +
+                        ", poll='" + poll + '\'' +
+                        ", card='" + card + '\'' +
                         ", language='" + language + '\'' +
-                        ", text=" + text +
-                        ", editedAt=" + editedAt +
-                        ", pinned=" + pinned +
-                        ", muted=" + muted +
-                        ", reblogged=" + reblogged +
-                        ", sensitive=" + sensitive +
-                        ", bookmarked=" + bookmarked +
-                        ", favourited=" + favourited +
+                        ", text='" + text + '\'' +
+                        ", editedAt='" + editedAt + '\'' +
+                        ", pinned='" + pinned + '\'' +
+                        ", muted='" + muted + '\'' +
+                        ", reblogged='" + reblogged + '\'' +
+                        ", sensitive='" + sensitive + '\'' +
+                        ", bookmarked='" + bookmarked + '\'' +
+                        ", favourited='" + favourited + '\'' +
                         '}';
         }
 }
