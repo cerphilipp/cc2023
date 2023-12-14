@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,5 +100,16 @@ public class TroetController {
         MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
         result = resultAsArrayList.toArray(result);
         return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/metrics")
+    public ResponseEntity<String> metrics(){
+        String json = gson.toJson(
+                new MetricsResponse(
+                        getHomeAccessCounter.count(),
+                        rebloggedAccesCounter.count(),
+                        troetsrouteAccessCounter.count()
+                ));
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 }
