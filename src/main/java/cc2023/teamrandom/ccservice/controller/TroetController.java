@@ -1,7 +1,7 @@
 package cc2023.teamrandom.ccservice.controller;
 
-import cc2023.teamrandom.ccservice.interfaces.GetHomeService;
-import cc2023.teamrandom.ccservice.interfaces.TroetListService;
+import cc2023.teamrandom.ccservice.services.TroetListService;
+import cc2023.teamrandom.ccservice.services.TroetListServiceImpl;
 
 import cc2023.teamrandom.ccservice.model.*;
 import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
@@ -18,20 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-
 @RestController
 public class TroetController {
-    public GetHomeService service = new GetHomeService();
-
+    public TroetListService service = new TroetListServiceImpl();
 
 	Gson gson;
 
@@ -43,7 +37,6 @@ public class TroetController {
     private Logger logger;
     private final Counter troetsrouteAccessCounter;
     private final Counter rebloggedAccesCounter;
-    private final Counter getHomeAccessCounter;
     @Autowired
     public TroetController(MeterRegistry meterRegistry, Logger logger) {
         this.troetsrouteAccessCounter = Counter.builder("custom.route.troetaccess")
@@ -52,9 +45,7 @@ public class TroetController {
         this.rebloggedAccesCounter = Counter.builder("custom.route.rebloggedaccess")
                 .description("Counts the number of times a route is accessed")
                 .register(meterRegistry);
-        this.getHomeAccessCounter = Counter.builder("custom.route.gethomeaccess")
-                .description("Counts the number of times a route is accessed")
-                .register(meterRegistry);
+
 		this.logger = logger;
     }
 
@@ -64,7 +55,7 @@ public class TroetController {
                                          @RequestParam(name = "offset", required = false) Integer offset,
                                          @RequestParam(name = "troeter", required = false) String troeter) {
         troetsrouteAccessCounter.increment();
-        MastodonStatus[] entireMastodonStatuses = getHome().getBody();
+        MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
         if(entireMastodonStatuses == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
 
         try{
@@ -78,18 +69,10 @@ public class TroetController {
         }
     }
 
-    @RequestMapping(value = "/gethome", method = GET)
-    public ResponseEntity<MastodonStatus[]> getHome () {
-        getHomeAccessCounter.increment();
-        MastodonStatus[] response = gson.fromJson(service.getHome(), MastodonStatus[].class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
-    }
-
     @RequestMapping(value = "/api/home/troets/reblogged")
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
         rebloggedAccesCounter.increment();
-        MastodonStatus[] entireMastodonStatuses = getHome().getBody();
+        MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
 
         if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
 
@@ -110,16 +93,5 @@ public class TroetController {
         MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
         result = resultAsArrayList.toArray(result);
         return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
-    }
-
-    @RequestMapping(value="/metrics")
-    public ResponseEntity<String> metrics(){
-        String json = gson.toJson(
-                new MetricsResponse(
-                        getHomeAccessCounter.count(),
-                        rebloggedAccesCounter.count(),
-                        troetsrouteAccessCounter.count()
-                ));
-        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 }
