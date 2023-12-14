@@ -48,13 +48,6 @@ public class TroetController {
     }
 
 
-    @GetMapping("api/home/troets")
-    public ResponseEntity<String> list() {
-
-//    @GetMapping("api/home/troets")
-//    public ResponseEntity<String> list(){
-        return new ResponseEntity<>("Hello World", HttpStatus.OK);
-   }
 
     @RequestMapping(value = "/gethome", method = GET)
     public ResponseEntity<Status[]> getHome() {
@@ -116,14 +109,7 @@ public class TroetController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-/*
-    @RequestMapping(value = "/gethome", method = GET)
-    public ResponseEntity<Status[]> getHome () {
-        Status[] response = gson.fromJson(service.getHome(), Status[].class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
 
-    }
-    */
 
 
     @RequestMapping(value = "/api/home/troets/reblogged")
