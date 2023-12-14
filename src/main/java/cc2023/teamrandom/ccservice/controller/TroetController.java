@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -63,74 +62,6 @@ public class TroetController {
 
 
 
-    @RequestMapping(value = "/gethome", method = GET)
-    public ResponseEntity<Status[]> getHome() {
-        Status[] response = gson.fromJson(service.getHome(), Status[].class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @RequestMapping("/api/home/troets")
-    public ResponseEntity<Status[]> troets(@RequestParam(name = "limit", required = false) Integer limit,
-                                           @RequestParam(name = "offset", required = false) Integer offset,
-                                           @RequestParam(name = "troeter", required = false) String troeter) {
-        Status[] entireStatus = getHome().getBody();
-        if(entireStatus == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-    }
-
-    @RequestMapping("/api/home/troets")
-    public ResponseEntity<String> troets(@RequestParam(name = "limit", required = false) Integer limit,
-                                         @RequestParam(name = "offset", required = false) Integer offset,
-                                         @RequestParam(name = "troeter", required = false) String troeter) {
-        troetsrouteAccessCounter.increment();
-        MastodonStatus[] entireMastodonStatuses = getHome().getBody();
-        if(entireMastodonStatuses == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
-
-        try{
-            int offsetcounter = 0;
-            int limitcounter = 0;
-            if(offset == null)offset = 0;
-            if(limit == null)limit = 0;
-//        request an Server
-            ArrayList<Status> resultAsArrayList = new ArrayList<>();
-            if(troeter==null) {
-                for (Status status : entireStatus) {
-                    if(offset != offsetcounter){
-                        offsetcounter += 1;
-                    }
-                    else if(limit != limitcounter){
-                        limitcounter += 1;
-                        resultAsArrayList.add(status);
-                    }
-                    else if(limit == 0)
-                    {
-                        resultAsArrayList.add(status);
-                    }
-                }
-            } else {
-                for (Status status : entireStatus) {
-                    if (status.getUsername().equals(troeter)) {
-                        if (offset != offsetcounter) {
-                            offsetcounter += 1;
-                        } else if (limit != limitcounter) {
-                            limitcounter += 1;
-                            resultAsArrayList.add(status);
-                        } else if (limit == 0) {
-                            resultAsArrayList.add(status);
-                        }
-                    }
-                }
-            }
-            Status[] result = new Status[resultAsArrayList.size()];
-            result = resultAsArrayList.toArray(result);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-
-
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
 
     @RequestMapping(value = "/gethome", method = GET)
     public ResponseEntity<MastodonStatus[]> getHome () {
@@ -147,20 +78,12 @@ public class TroetController {
 
         if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
 
-
-        ArrayList<Status> resultAsArrayList = new ArrayList<>();
-        if(troeter==null) {
-            for (Status status : entireStatus) {
-
-                if (status.isReblogged()) resultAsArrayList.add(status);
-              
         ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
         if(troeter != null) {
             for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
                 if (mastodonStatus.isReblogged() && mastodonStatus.getUsername().equals(troeter)) {
                     resultAsArrayList.add(mastodonStatus);
                 }
-
             }
         } else {
             for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
@@ -185,3 +108,4 @@ public class TroetController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 }
+
