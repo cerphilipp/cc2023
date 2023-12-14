@@ -52,7 +52,6 @@ public class TroetController02 {
         //troetsrouteAccessCounter.increment();
         MastodonStatus[] entireMastodonStatuses = getHome().getBody();
         if(entireMastodonStatuses == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-            String jsonString = "Stati={";
 
             int offsetcounter = 0;
             int limitcounter = 0;
