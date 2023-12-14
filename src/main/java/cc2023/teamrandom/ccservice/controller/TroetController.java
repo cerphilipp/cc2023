@@ -90,12 +90,23 @@ public class TroetController {
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
         rebloggedAccesCounter.increment();
         MastodonStatus[] entireMastodonStatuses = getHome().getBody();
-        if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
-        ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
 
+        if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
+
+        ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
+        if(troeter != null) {
             for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if (mastodonStatus.isReblogged()) resultAsArrayList.add(mastodonStatus);
+                if (mastodonStatus.isReblogged() && mastodonStatus.getUsername().equals(troeter)) {
+                    resultAsArrayList.add(mastodonStatus);
+                }
             }
+        } else {
+            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
+                if (mastodonStatus.isReblogged()) {
+                    resultAsArrayList.add(mastodonStatus);
+                }
+            }
+        }
         MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
         result = resultAsArrayList.toArray(result);
         return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
