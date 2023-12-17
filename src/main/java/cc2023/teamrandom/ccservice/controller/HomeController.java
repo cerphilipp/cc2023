@@ -6,6 +6,7 @@ import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
 import cc2023.teamrandom.ccservice.services.TroetListService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.micrometer.core.annotation.Counted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ public class HomeController {
 				.create();
 	}
 
+	@Counted(value = "metrics.apicalls", description = "Noones gonna read this anyway since it does not work")
 	@RequestMapping(value = "/gethome", method = GET)
 	public ResponseEntity<MastodonStatus[]> getHome() {
 		MastodonStatus[] response = gson.fromJson(service.listTroets(), MastodonStatus[].class);

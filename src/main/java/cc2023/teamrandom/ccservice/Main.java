@@ -1,5 +1,8 @@
 package cc2023.teamrandom.ccservice;
 
+import io.micrometer.core.aop.CountedAspect;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -28,7 +31,6 @@ public class Main {
     public RestTemplate restTemplate(List<HttpMessageConverter<?>> messageConverters) {
         return new RestTemplate(messageConverters);
     }
-
     @Bean
     public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
         return new ByteArrayHttpMessageConverter();

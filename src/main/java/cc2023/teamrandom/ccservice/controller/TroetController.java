@@ -7,6 +7,7 @@ import cc2023.teamrandom.ccservice.model.*;
 import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
 import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
 import com.google.gson.GsonBuilder;
+import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,27 +35,15 @@ public class TroetController {
                 .create();;
     }
 
-    private Logger logger;
-    private final Counter troetsrouteAccessCounter;
-    private final Counter rebloggedAccesCounter;
-    @Autowired
-    public TroetController(MeterRegistry meterRegistry, Logger logger) {
-        this.troetsrouteAccessCounter = Counter.builder("custom.route.troetaccess")
-                .description("Counts the number of times a route is accessed")
-                .register(meterRegistry);
-        this.rebloggedAccesCounter = Counter.builder("custom.route.rebloggedaccess")
-                .description("Counts the number of times a route is accessed")
-                .register(meterRegistry);
+    public TroetController() {
 
-		this.logger = logger;
     }
 
-
+    @Counted(value = "metrics.troets", description = "Noones gonna read this anyway since it does not work")
     @RequestMapping("/api/home/troets")
     public ResponseEntity<String> troets(@RequestParam(name = "limit", required = false) Integer limit,
                                          @RequestParam(name = "offset", required = false) Integer offset,
                                          @RequestParam(name = "troeter", required = false) String troeter) {
-        troetsrouteAccessCounter.increment();
         MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
         if(entireMastodonStatuses == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -69,9 +58,9 @@ public class TroetController {
         }
     }
 
+    @Counted(value = "metrics.troets.reblogged", description = "I regret having taken this course.")
     @RequestMapping(value = "/api/home/troets/reblogged")
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
-        rebloggedAccesCounter.increment();
         MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
 
         if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
