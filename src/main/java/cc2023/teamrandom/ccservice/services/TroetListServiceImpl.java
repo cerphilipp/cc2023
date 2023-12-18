@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
@@ -24,7 +25,7 @@ public class TroetListServiceImpl implements TroetListService {
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String uri = "http://localhost:8080/home"; //Access Troetbot here, probably won't survive for long
+            String uri = "http://troetbot:80/home"; //Access Troetbot here, probably won't survive for long
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             HttpEntity<String> entity = new HttpEntity<>("", headers);

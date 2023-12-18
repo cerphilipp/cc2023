@@ -1,32 +1,31 @@
 package cc2023.teamrandom.ccservice.controller;
 
-import cc2023.teamrandom.ccservice.services.TroetListService;
-import cc2023.teamrandom.ccservice.services.TroetListServiceImpl;
-
-import cc2023.teamrandom.ccservice.model.*;
+import cc2023.teamrandom.ccservice.model.MastodonStatus;
 import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
 import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
+import cc2023.teamrandom.ccservice.services.TroetListService;
+import cc2023.teamrandom.ccservice.services.TroetListServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-
-import java.util.logging.Logger;
-import com.google.gson.Gson;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @RestController
 public class TroetController {
     public TroetListService service = new TroetListServiceImpl();
+
 
 	Gson gson;
 
@@ -40,77 +39,77 @@ public class TroetController {
 
     @Counted(value = "metrics.troets", description = "Number of calls to metrics/troets endpoint")
     @RequestMapping(value = "/api/home/troets", produces = { "application/json" })
-    public ResponseEntity<MastodonStatus[]> troets(@RequestParam(name = "limit", required = false) Integer limit,
+    public ResponseEntity<JsonNode> troets(@RequestParam(name = "limit", required = false) Integer limit,
                                                    @RequestParam(name = "offset", required = false) Integer offset,
                                                    @RequestParam(name = "troeter", required = false) String troeter) {
-        //troetsrouteAccessCounter.increment();
-        MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
-        if(entireMastodonStatuses == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-
-        int offsetcounter = 0;
-        int limitcounter = 0;
-        if(offset == null)offset = 0;
-        if(limit == null)limit = 0;
-//        request an Server
-        ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
-        if(troeter==null) {
-            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if(offset != offsetcounter){
-                    offsetcounter += 1;
-                }
-                else if(limit != limitcounter){
-                    limitcounter += 1;
-                    resultAsArrayList.add(mastodonStatus);
-                }
-                else if(limit == 0)
-                {
-                    resultAsArrayList.add(mastodonStatus);
-                }
+        try {
+            // Assuming service.listTroets() returns a JSON string
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode entireMastodonStatuses = objectMapper.readTree(service.listTroets());
+            if (entireMastodonStatuses == null || !entireMastodonStatuses.isArray()) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
-        } else {
-            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if (mastodonStatus.getUsername().equals(troeter)) {
+
+            int offsetcounter = 0;
+            int limitcounter = 0;
+            if (offset == null) offset = 0;
+            if (limit == null) limit = 0;
+
+            ArrayNode resultArray = objectMapper.createArrayNode();
+
+            for (JsonNode mastodonStatus : entireMastodonStatuses) {
+                if (troeter == null || mastodonStatus.has("username") && mastodonStatus.get("username").asText().equals(troeter)) {
                     if (offset != offsetcounter) {
                         offsetcounter += 1;
                     } else if (limit != limitcounter) {
                         limitcounter += 1;
-                        resultAsArrayList.add(mastodonStatus);
+                        resultArray.add(mastodonStatus);
                     } else if (limit == 0) {
-                        resultAsArrayList.add(mastodonStatus);
+                        resultArray.add(mastodonStatus);
                     }
                 }
             }
-        }
-        MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
-        result = resultAsArrayList.toArray(result);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(resultArray, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 
     @Counted(value = "metrics.troets.reblogged", description = "Number of calls to the metrics/troets/reblogged endpoint")
-    @RequestMapping(value = "/api/home/troets/reblogged")
-    public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
-        MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
+    @RequestMapping(value = "/api/home/troets/reblogged", produces = { "application/json" })
+    public ResponseEntity<JsonNode> reblogged(@RequestParam(name="troeter", required = false) String troeter){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String homeJson = service.listTroets();
 
-        if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
+            JsonNode entireMastodonStatuses = objectMapper.readTree(homeJson);
 
-        ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
-        if(troeter != null) {
-            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if (mastodonStatus.isReblogged() && mastodonStatus.getUsername().equals(troeter)) {
-                    resultAsArrayList.add(mastodonStatus);
+            if (entireMastodonStatuses == null || !entireMastodonStatuses.isArray()) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
+            ArrayNode resultArray = objectMapper.createArrayNode();
+
+            for (JsonNode mastodonStatus : entireMastodonStatuses) {
+                JsonNode reblog = mastodonStatus.has("reblog") ? mastodonStatus.get("reblog") : null;
+                boolean isRebloggedInner = reblog != null && reblog.has("reblogged") && reblog.get("reblogged").asBoolean();
+                boolean isReblogged = isRebloggedInner || mastodonStatus.has("reblogged") && mastodonStatus.get("reblogged").asBoolean();
+
+                String username = mastodonStatus.has("username") ? mastodonStatus.get("username").asText() : null;
+
+
+                if (troeter != null && isReblogged && troeter.equals(username)) {
+                    resultArray.add(mastodonStatus);
+                } else if (troeter == null && isReblogged) {
+                    resultArray.add(mastodonStatus);
                 }
             }
-        } else {
-            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if (mastodonStatus.isReblogged()) {
-                    resultAsArrayList.add(mastodonStatus);
-                }
-            }
+
+            return new ResponseEntity<>(resultArray, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
-        result = resultAsArrayList.toArray(result);
-        return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
     }
 }

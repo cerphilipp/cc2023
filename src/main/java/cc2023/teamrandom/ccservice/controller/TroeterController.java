@@ -6,6 +6,10 @@ import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
 import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
 import cc2023.teamrandom.ccservice.services.TroetListService;
 import cc2023.teamrandom.ccservice.services.TroetListServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.micrometer.core.annotation.Counted;
@@ -31,18 +35,35 @@ public class TroeterController {
 
 	@Counted(value = "metrics.troeters", description = "Number of calls to the metrics/troeters endpoint")
 	@RequestMapping(value = "/api/home/troeters", produces = { "application/json" })
-	public ResponseEntity<String> troeters(){
-		MastodonStatus[] entireMastodonStatuses = gson.fromJson(troetListService.listTroets(), MastodonStatus[].class);
+	public ResponseEntity<JsonNode> troeters(){
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String homeJson = troetListService.listTroets();
 
-		Set<MastodonAccount> uniqueAccounts = new HashSet<>();
+			Set<String> uniqueAccounts = new HashSet<>();
 
-		for(MastodonStatus status : entireMastodonStatuses) {
-			MastodonAccount account = status.getAccount();
-			uniqueAccounts.add(account);
+			JsonNode entireMastodonStatuses = objectMapper.readTree(homeJson);
+
+			if (entireMastodonStatuses == null || !entireMastodonStatuses.isArray()) {
+				return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			}
+
+			ArrayNode resultArray = objectMapper.createArrayNode();
+
+			for (JsonNode mastodonStatus : entireMastodonStatuses) {
+				JsonNode account = mastodonStatus.has("account") ? mastodonStatus.get("account") : null;
+				if (account == null) continue;
+				String id = account.has("id") ? account.get("id").asText() : null;
+
+				if(id != null && !uniqueAccounts.contains(id)) {
+					uniqueAccounts.add(id);
+					resultArray.add(account);
+				}
+			}
+
+			return new ResponseEntity<>(resultArray, HttpStatus.OK);
+		} catch (JsonProcessingException e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		List<MastodonAccount> result = new ArrayList<>(uniqueAccounts);
-
-		return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
 	}
 }
