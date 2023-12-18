@@ -36,3 +36,6 @@ gradlew.bat loadDockerImageIntoKind
 
 ```
 
+## Tilt Commands
+
+Before you start the service make sure you the Enviroment variables MASTODON_INSTANCE_HOSTNAME and MASTODON_ACCESS_TOKEN are set
