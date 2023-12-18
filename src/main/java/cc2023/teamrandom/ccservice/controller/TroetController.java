@@ -1,6 +1,9 @@
 package cc2023.teamrandom.ccservice.controller;
 
 import cc2023.teamrandom.ccservice.model.MastodonStatus;
+import cc2023.teamrandom.ccservice.interfaces.GetHomeService;
+import cc2023.teamrandom.ccservice.interfaces.TroetListService;
+import cc2023.teamrandom.ccservice.model.*;
 import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
 import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
 import cc2023.teamrandom.ccservice.services.TroetListService;
@@ -13,19 +16,31 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.micrometer.core.annotation.Counted;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import java.util.logging.Logger;
+import com.google.gson.Gson;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 
 @RestController
 public class TroetController {
     public TroetListService service = new TroetListServiceImpl();
-
 
 	Gson gson;
 
@@ -43,7 +58,6 @@ public class TroetController {
                                                    @RequestParam(name = "offset", required = false) Integer offset,
                                                    @RequestParam(name = "troeter", required = false) String troeter) {
         try {
-            // Assuming service.listTroets() returns a JSON string
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode entireMastodonStatuses = objectMapper.readTree(service.listTroets());
             if (entireMastodonStatuses == null || !entireMastodonStatuses.isArray()) {
@@ -76,7 +90,7 @@ public class TroetController {
         }
 
     }
-
+  
     @Counted(value = "metrics.troets.reblogged", description = "Number of calls to the metrics/troets/reblogged endpoint")
     @RequestMapping(value = "/api/home/troets/reblogged", produces = { "application/json" })
     public ResponseEntity<JsonNode> reblogged(@RequestParam(name="troeter", required = false) String troeter){
@@ -97,6 +111,7 @@ public class TroetController {
                 boolean isRebloggedInner = reblog != null && reblog.has("reblogged") && reblog.get("reblogged").asBoolean();
                 boolean isReblogged = isRebloggedInner || mastodonStatus.has("reblogged") && mastodonStatus.get("reblogged").asBoolean();
 
+
                 String username = mastodonStatus.has("username") ? mastodonStatus.get("username").asText() : null;
 
 
@@ -113,3 +128,4 @@ public class TroetController {
         }
     }
 }
+
