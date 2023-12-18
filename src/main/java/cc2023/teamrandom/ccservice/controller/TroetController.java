@@ -1,17 +1,25 @@
 package cc2023.teamrandom.ccservice.controller;
 
+import cc2023.teamrandom.ccservice.model.MastodonStatus;
 import cc2023.teamrandom.ccservice.interfaces.GetHomeService;
 import cc2023.teamrandom.ccservice.interfaces.TroetListService;
 import cc2023.teamrandom.ccservice.model.*;
 import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
 import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
+import cc2023.teamrandom.ccservice.services.TroetListService;
+import cc2023.teamrandom.ccservice.services.TroetListServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.annotation.Counted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +40,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 public class TroetController {
-    public GetHomeService service = new GetHomeService();
+    public TroetListService service = new TroetListServiceImpl();
 
 	Gson gson;
 
@@ -41,71 +49,83 @@ public class TroetController {
                 .create();;
     }
 
-    private Logger logger;
-    private final Counter troetsrouteAccessCounter;
-    private final Counter rebloggedAccesCounter;
-    private final Counter getHomeAccessCounter;
-    @Autowired
-    public TroetController(MeterRegistry meterRegistry, Logger logger) {
-        this.troetsrouteAccessCounter = Counter.builder("custom.route.troetaccess")
-                .description("Counts the number of times a route is accessed")
-                .register(meterRegistry);
-        this.rebloggedAccesCounter = Counter.builder("custom.route.rebloggedaccess")
-                .description("Counts the number of times a route is accessed")
-                .register(meterRegistry);
-        this.getHomeAccessCounter = Counter.builder("custom.route.gethomeaccess")
-                .description("Counts the number of times a route is accessed")
-                .register(meterRegistry);
-		this.logger = logger;
+    public TroetController() {
     }
 
+    @Counted(value = "metrics.troets", description = "Number of calls to metrics/troets endpoint")
+    @RequestMapping(value = "/api/home/troets", produces = { "application/json" })
+    public ResponseEntity<JsonNode> troets(@RequestParam(name = "limit", required = false) Integer limit,
+                                                   @RequestParam(name = "offset", required = false) Integer offset,
+                                                   @RequestParam(name = "troeter", required = false) String troeter) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode entireMastodonStatuses = objectMapper.readTree(service.listTroets());
+            if (entireMastodonStatuses == null || !entireMastodonStatuses.isArray()) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
 
+            int offsetcounter = 0;
+            int limitcounter = 0;
+            if (offset == null) offset = 0;
+            if (limit == null) limit = 0;
 
+            ArrayNode resultArray = objectMapper.createArrayNode();
 
-
-    @RequestMapping(value = "/gethome", method = GET)
-    public ResponseEntity<MastodonStatus[]> getHome () {
-        getHomeAccessCounter.increment();
-        MastodonStatus[] response = gson.fromJson(service.getHome(), MastodonStatus[].class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-
-    @RequestMapping(value = "/api/home/troets/reblogged")
-    public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
-        rebloggedAccesCounter.increment();
-        MastodonStatus[] entireMastodonStatuses = getHome().getBody();
-
-        if(entireMastodonStatuses == null) return new ResponseEntity<>("404", HttpStatus.NOT_FOUND);
-
-        ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
-        if(troeter != null) {
-            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if (mastodonStatus.isReblogged() && mastodonStatus.getUsername().equals(troeter)) {
-                    resultAsArrayList.add(mastodonStatus);
+            for (JsonNode mastodonStatus : entireMastodonStatuses) {
+                if (troeter == null || mastodonStatus.has("username") && mastodonStatus.get("username").asText().equals(troeter)) {
+                    if (offset != offsetcounter) {
+                        offsetcounter += 1;
+                    } else if (limit != limitcounter) {
+                        limitcounter += 1;
+                        resultArray.add(mastodonStatus);
+                    } else if (limit == 0) {
+                        resultArray.add(mastodonStatus);
+                    }
                 }
             }
-        } else {
-            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
-                if (mastodonStatus.isReblogged()) {
-                    resultAsArrayList.add(mastodonStatus);
-                }
-            }
+
+            return new ResponseEntity<>(resultArray, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
-        result = resultAsArrayList.toArray(result);
-        return new ResponseEntity<>(gson.toJson(result), HttpStatus.OK);
-    }
 
-    @RequestMapping(value="/metrics")
-    public ResponseEntity<String> metrics(){
-        String json = gson.toJson(
-                new MetricsResponse(
-                        getHomeAccessCounter.count(),
-                        rebloggedAccesCounter.count(),
-                        troetsrouteAccessCounter.count()
-                ));
-        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+  
+    @Counted(value = "metrics.troets.reblogged", description = "Number of calls to the metrics/troets/reblogged endpoint")
+    @RequestMapping(value = "/api/home/troets/reblogged", produces = { "application/json" })
+    public ResponseEntity<JsonNode> reblogged(@RequestParam(name="troeter", required = false) String troeter){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String homeJson = service.listTroets();
+
+            JsonNode entireMastodonStatuses = objectMapper.readTree(homeJson);
+
+            if (entireMastodonStatuses == null || !entireMastodonStatuses.isArray()) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
+            ArrayNode resultArray = objectMapper.createArrayNode();
+
+            for (JsonNode mastodonStatus : entireMastodonStatuses) {
+                JsonNode reblog = mastodonStatus.has("reblog") ? mastodonStatus.get("reblog") : null;
+                boolean isRebloggedInner = reblog != null && reblog.has("reblogged") && reblog.get("reblogged").asBoolean();
+                boolean isReblogged = isRebloggedInner || mastodonStatus.has("reblogged") && mastodonStatus.get("reblogged").asBoolean();
+
+
+                String username = mastodonStatus.has("username") ? mastodonStatus.get("username").asText() : null;
+
+
+                if (troeter != null && isReblogged && troeter.equals(username)) {
+                    resultArray.add(mastodonStatus);
+                } else if (troeter == null && isReblogged) {
+                    resultArray.add(mastodonStatus);
+                }
+            }
+
+            return new ResponseEntity<>(resultArray, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 

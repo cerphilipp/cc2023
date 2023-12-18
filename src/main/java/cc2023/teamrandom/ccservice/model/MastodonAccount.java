@@ -1,6 +1,7 @@
 package cc2023.teamrandom.ccservice.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MastodonAccount {
 	private String id;
@@ -229,5 +230,18 @@ public class MastodonAccount {
 
 	public void setNotIndexed(boolean notIndexed) {
 		this.notIndexed = notIndexed;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MastodonAccount that = (MastodonAccount) o;
+		return Objects.equals(id, that.id) && Objects.equals(username, that.username);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, username);
 	}
 }
