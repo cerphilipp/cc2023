@@ -13,21 +13,23 @@ import java.util.Collections;
 import java.util.Objects;
 
 @Service
-public class ApiMetricsService implements MetricsService {
-	public final Counter apiCallCounter;
-
+public class HomeMetricsService implements MetricsService {
+	private final Counter homeMetricsCounter;
 	Gson gson = new Gson();
+
 	@Autowired
-	public ApiMetricsService(MeterRegistry meter){
-		this.apiCallCounter = meter.counter("metrics.apicalls");
+	public HomeMetricsService(MeterRegistry meter) {
+		this.homeMetricsCounter = meter.counter("metrics.gethome");
+
 	}
+
 	@Override
 	public MetricsResponse getCounterValue() {
 		String jsonResponse = "{...}"; // Replace with your actual JSON response
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
-			String uri = "http://localhost:9000/actuator/metrics/metrics.apicalls"; //Access Troetbot here, probably won't survive for long
+			String uri = "http://localhost:9000/actuator/metrics/metrics.gethome"; //Access Troetbot here, probably won't survive for long
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 			HttpEntity<String> entity = new HttpEntity<>("", headers);

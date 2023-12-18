@@ -28,7 +28,7 @@ public class HomeController {
 				.create();
 	}
 
-	@Counted(value = "metrics.apicalls", description = "Noones gonna read this anyway since it does not work")
+	@Counted(value = "metrics.gethome", description = "Number of calls to /gethome endpoint")
 	@RequestMapping(value = "/gethome", method = GET)
 	public ResponseEntity<MastodonStatus[]> getHome() {
 		MastodonStatus[] response = gson.fromJson(service.listTroets(), MastodonStatus[].class);

@@ -36,29 +36,59 @@ public class TroetController {
     }
 
     public TroetController() {
-
     }
 
-    @Counted(value = "metrics.troets", description = "Noones gonna read this anyway since it does not work")
-    @RequestMapping("/api/home/troets")
-    public ResponseEntity<String> troets(@RequestParam(name = "limit", required = false) Integer limit,
-                                         @RequestParam(name = "offset", required = false) Integer offset,
-                                         @RequestParam(name = "troeter", required = false) String troeter) {
+    @Counted(value = "metrics.troets", description = "Number of calls to metrics/troets endpoint")
+    @RequestMapping(value = "/api/home/troets", produces = { "application/json" })
+    public ResponseEntity<MastodonStatus[]> troets(@RequestParam(name = "limit", required = false) Integer limit,
+                                                   @RequestParam(name = "offset", required = false) Integer offset,
+                                                   @RequestParam(name = "troeter", required = false) String troeter) {
+        //troetsrouteAccessCounter.increment();
         MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
-        if(entireMastodonStatuses == null) return new ResponseEntity<>("500", HttpStatus.INTERNAL_SERVER_ERROR);
+        if(entireMastodonStatuses == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
-        try{
+        int offsetcounter = 0;
+        int limitcounter = 0;
+        if(offset == null)offset = 0;
+        if(limit == null)limit = 0;
 //        request an Server
-
-
-        return new ResponseEntity<>("Hello World", HttpStatus.OK);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>("505", HttpStatus.BAD_REQUEST);
+        ArrayList<MastodonStatus> resultAsArrayList = new ArrayList<>();
+        if(troeter==null) {
+            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
+                if(offset != offsetcounter){
+                    offsetcounter += 1;
+                }
+                else if(limit != limitcounter){
+                    limitcounter += 1;
+                    resultAsArrayList.add(mastodonStatus);
+                }
+                else if(limit == 0)
+                {
+                    resultAsArrayList.add(mastodonStatus);
+                }
+            }
+        } else {
+            for (MastodonStatus mastodonStatus : entireMastodonStatuses) {
+                if (mastodonStatus.getUsername().equals(troeter)) {
+                    if (offset != offsetcounter) {
+                        offsetcounter += 1;
+                    } else if (limit != limitcounter) {
+                        limitcounter += 1;
+                        resultAsArrayList.add(mastodonStatus);
+                    } else if (limit == 0) {
+                        resultAsArrayList.add(mastodonStatus);
+                    }
+                }
+            }
         }
+        MastodonStatus[] result = new MastodonStatus[resultAsArrayList.size()];
+        result = resultAsArrayList.toArray(result);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
     }
 
-    @Counted(value = "metrics.troets.reblogged", description = "I regret having taken this course.")
+    @Counted(value = "metrics.troets.reblogged", description = "Number of calls to the metrics/troets/reblogged endpoint")
     @RequestMapping(value = "/api/home/troets/reblogged")
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
         MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);

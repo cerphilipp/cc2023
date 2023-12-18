@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.Objects;
 
-
 @Service
 public class RebloggedMetricsService implements MetricsService{
 	private final Counter rebloggedCounter;

@@ -36,7 +36,7 @@ public class TroetMetricsService implements MetricsService{
 			jsonResponse = Objects.requireNonNull(result.getBody()).toString();
 		} catch (Exception e) {
 			e.printStackTrace(); //TODO Replace with logger
-			jsonResponse = "{\"Error\":\"Dunno\"}";
+			jsonResponse = "{\"Error\":\"Error while trying to access metrics route\"}";
 		}
 
 
