@@ -89,7 +89,7 @@ public class TroetController {
     }
 
     @Counted(value = "metrics.troets.reblogged", description = "Number of calls to the metrics/troets/reblogged endpoint")
-    @RequestMapping(value = "/api/home/troets/reblogged")
+    @RequestMapping(value = "/api/home/troets/reblogged", produces = { "application/json" })
     public ResponseEntity<String> reblogged(@RequestParam(name="troeter", required = false) String troeter){
         MastodonStatus[] entireMastodonStatuses = gson.fromJson(service.listTroets(), MastodonStatus[].class);
 

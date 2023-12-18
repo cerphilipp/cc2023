@@ -39,7 +39,7 @@ public class MetricsController {
 		this.meter = meter;
 	}
 
-	@GetMapping
+	@GetMapping(produces = { "application/json" })
 	public String getMetrics(){
 
 		List<MetricsResponse> result = new LinkedList<>();
