@@ -1,8 +1,6 @@
 package cc2023.teamrandom.ccservice.controller;
 
 import cc2023.teamrandom.ccservice.model.MastodonStatus;
-import cc2023.teamrandom.ccservice.interfaces.GetHomeService;
-import cc2023.teamrandom.ccservice.interfaces.TroetListService;
 import cc2023.teamrandom.ccservice.model.*;
 import cc2023.teamrandom.ccservice.model.gson.StatusSerializer;
 import cc2023.teamrandom.ccservice.model.gson.ZonedDateTimeTypeAdapter;
