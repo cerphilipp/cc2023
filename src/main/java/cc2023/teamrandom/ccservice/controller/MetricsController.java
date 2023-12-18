@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/metrics")
+@RequestMapping("api/home/metrics")
 public class MetricsController {
 
 	//private final ApiMetricsService apiMetricsService;

@@ -15,22 +15,29 @@ spec:
         app: cc-service
     spec:
       containers:
-      - name: cc-service-container
-        image: cc-service:1
-        ports:
-        - containerPort: 9000
-        readinessProbe:
-          httpGet:
-            path: /actuator/health/readiness
-            port: 9000
-          initialDelaySeconds: 15
-          periodSeconds: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health/liveness
-            port: 9000
-          initialDelaySeconds: 30
-          periodSeconds: 3
+        - name: cc-service-container
+          image: cc-service:1
+          ports:
+            - containerPort: 9000
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
 
 ---
 
@@ -53,17 +60,17 @@ kind: Ingress
 metadata:
   name: cc-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /api/home$1$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-  - host: localhost
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: cc-service
-            port:
-              number: 9000
-
+    - host: localhost
+      http:
+        paths:
+          - path: /api/cc-service(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: cc-service
+                port:
+                  number: 9000
