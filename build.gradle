@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.1.4'
     id 'java'
 
 }
@@ -11,15 +12,20 @@ sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
-
+    maven {
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    implementation 'org.aspectj:aspectjweaver:1.9.21'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -28,7 +34,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation  'org.mockito:mockito-core:1.+'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
 
 }
@@ -43,3 +49,14 @@ jar {
         attributes 'Main-Class': 'cc2023.teamrandom.ccservice.Main'
     }
 }
+
+jib {
+    to {
+        image = 'cc-service:1'
+    }
+}
+
+task loadDockerImageIntoKind(type: Exec, dependsOn: 'jibDockerBuild') {
+    commandLine 'kind', 'load', 'docker-image', 'cc-service:1', '--name', 'cc-2023'
+}
+
