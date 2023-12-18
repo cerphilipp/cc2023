@@ -74,3 +74,15 @@ spec:
                 name: cc-service
                 port:
                   number: 9000
+
+---
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cc-service-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: cc-service
