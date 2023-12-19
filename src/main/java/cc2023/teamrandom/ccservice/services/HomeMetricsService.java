@@ -12,35 +12,44 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.Objects;
 
+// Die Klasse wird als Spring Service markiert, um von Spring als Komponente erkannt und verwaltet zu werden.
 @Service
 public class HomeMetricsService implements MetricsService {
+
+	// Zähler für die Metrik "metrics.gethome".
 	private final Counter homeMetricsCounter;
+
+	// Gson-Objekt für die JSON-Verarbeitung.
 	Gson gson = new Gson();
 
+	// Konstruktor, der den Zähler initialisiert und einen MeterRegistry injiziert.
 	@Autowired
 	public HomeMetricsService(MeterRegistry meter) {
 		this.homeMetricsCounter = meter.counter("metrics.gethome");
-
 	}
 
+	// Implementierung der Methode aus dem MetricsService-Interface.
 	@Override
 	public MetricsResponse getCounterValue() {
-		String jsonResponse = "{...}"; // Replace with your actual JSON response
+		String jsonResponse = "{...}"; // Ersetzen Sie dies durch Ihre tatsächliche JSON-Antwort
 
 		try {
+			// Erstellung eines RestTemplate für HTTP-Anfragen.
 			RestTemplate restTemplate = new RestTemplate();
-			String uri = "http://localhost:9000/actuator/metrics/metrics.gethome"; //Access Troetbot here, probably won't survive for long
+			String uri = "http://localhost:9000/actuator/metrics/metrics.gethome";
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 			HttpEntity<String> entity = new HttpEntity<>("", headers);
+
+			// Ausführung der HTTP-Anfrage und Extrahieren der JSON-Antwort.
 			ResponseEntity<?> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 			jsonResponse = Objects.requireNonNull(result.getBody()).toString();
 		} catch (Exception e) {
-			e.printStackTrace(); //TODO Replace with logger
+			e.printStackTrace(); // TODO: Ersetzen Sie dies durch Logger-Ausgaben
 			jsonResponse = "{\"Error\":\"Dunno\"}";
 		}
 
-
+		// Deserialisierung der JSON-Antwort in ein MetricsResponse-Objekt und Rückgabe.
 		return gson.fromJson(jsonResponse, MetricsResponse.class);
 	}
 }

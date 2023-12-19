@@ -11,28 +11,35 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// Die Implementierung des TroetListService-Interfaces.
 @Service
 public class TroetListServiceImpl implements TroetListService {
 
+    // Logger für Protokollierungszwecke.
     @Autowired
     private Logger logger;
 
-    public TroetListServiceImpl(){
-
+    // Standardkonstruktor.
+    public TroetListServiceImpl() {
     }
+
+    // Implementierung der Methode aus dem TroetListService-Interface.
     @Override
-    public String listTroets(){
+    public String listTroets() {
 
         try {
+            // Erstellung eines RestTemplate für HTTP-Anfragen.
             RestTemplate restTemplate = new RestTemplate();
-            String uri = "http://troetbot:80/home"; //Access Troetbot here, probably won't survive for long
+            String uri = "http://troetbot:80/home"; // Zugriff auf den Troetbot, wahrscheinlich wird dies nicht lange überleben
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             HttpEntity<String> entity = new HttpEntity<>("", headers);
+
+            // Ausführung der HTTP-Anfrage und Rückgabe der JSON-Antwort.
             ResponseEntity<?> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
             return Objects.requireNonNull(result.getBody()).toString();
         } catch (Exception e) {
-            e.printStackTrace(); //TODO Replace with logger
+            e.printStackTrace(); // TODO: Ersetzen Sie dies durch Logger-Ausgaben
         }
         return null;
     }
